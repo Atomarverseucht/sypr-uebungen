@@ -1,0 +1,59 @@
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg$ cd ./sypr-uebungen/Aufgabe2
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ time java Bubblesort 1000 < /dev/null
+> /dev/null
+
+real    0m0.249s
+user    0m0.063s
+sys     0m0.020s
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ time java Bubblesort 10000 < /dev/null
+ > /dev/null
+
+real    0m0.364s
+user    0m0.090s
+sys     0m0.036s
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ time java Bubblesort 100000 < /dev/nul
+l > /dev/null
+
+real    0m0.755s
+user    0m0.131s
+sys     0m0.055s
+
+-- C --
+./bubblesort 10 < /dev/null | tail -10 > out.txt
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ sort -n out.txt | diff - out.txt
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ time ./bubblesort 1000 < /dev/null > /dev/null
+
+real    0m0.011s
+user    0m0.004s
+sys     0m0.000s
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ time ./bubblesort 10000 < /dev/null > /dev/null
+
+real    0m0.261s
+user    0m0.255s
+sys     0m0.000s
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ time ./bubblesort 100000 < /dev/null > /dev/null
+
+real    0m32.998s
+user    0m32.992s
+sys     0m0.001s
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ ./bubblesort 1000 < /dev/null | tail -1000 > out.txt
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$ sort -n out.txt | diff - out.txt
+tombo@AtomsOberflche:/mnt/c/Users/tombo/HTWG/AIN2/SysProg/sypr-uebungen/Aufgabe2$
+
+Verhält sich das C-Programm bei allen Eingaben wie das Java-Programm?
+ - Bei ungültigen Eingaben greift selbstprogrammierte Fehlerbehandlung, bei Java ist die vordefiniert
+
+Funktioniert die Fehlerbehandlung bei Speicherreservierung und Einlesen?
+ - ja
+
+Meldet valgrind Fehler?
+ - nein
+
+Meldet cppcheck Probleme?
+ - nein
+
+Wächst die Ausführungszeit tatsächlich quadratisch mit der Array-Größe?
+ - nein, könnte an dem zufälligen Input liegen
+
+Ist das Java-Programm oder das C-Programm schneller? Können Sie sich den Unterschied erklären?
+ - JVM optimiert zuerst den Code (dauert anfangs), sorgt bei längerer Laufzeit für bessere Performance
