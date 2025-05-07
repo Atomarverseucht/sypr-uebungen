@@ -2,15 +2,15 @@
 # Makefile
 #
 # Autor: H.Drachenfels
-# Erstellt am: 23.2.2022
+# Erstellt am: 18.7.2022
 #
 
-CC = gcc -g -fno-stack-protector -Wwrite-strings
-CFLAGS = -Wall -Wextra -Werror -std=$(STD) -pedantic
+CC = gcc -g
+CFLAGS = -Wall -Wextra -Werror -Wvla -std=$(STD) -pedantic
 CPPCHECK = cppcheck --enable=warning,style --std=$(STD)
 STD = c11
 
-TARGET = aufgabe1
+TARGET = stringsort
 
 .PHONY: all clean cppcheck
 
