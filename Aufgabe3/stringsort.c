@@ -22,15 +22,14 @@ int main(int argc, const char *argv[]){
     {
         return 1;
     }
+    int strL = strlen(argv[1])+1;
     for(int i = 0; i < n; i++){
-        a[i] = malloc((strlen(argv[1])+1) * sizeof(char));
+        a[i] = malloc(strL * sizeof(char));
         if (a[i] == NULL)
         {
             return 1;
         }
     }
-
-    
 
     printf("Unsortiertes Array:\n");
     srand((unsigned int) time(NULL));
@@ -38,15 +37,32 @@ int main(int argc, const char *argv[]){
     {
         int r = rand() % n;
         sprintf(a[k], "%d", r);
-        printf("%s ", a[k]);
+        printf("%s, ", a[k]);
     }
-    printf("\n");
+
+    printf("\nSortiertes Array:\n");
     bubblesort(a,n);
+    printf("\n");
+    char* out = malloc(n * (strL+2) * sizeof(char));
+    if(!out){
+        return -1;
+    }
+    out[0] = '\0';
+    for(int i=0; i < n; i++){
+        if(i > 0 && strcmp(a[i-1], a[i]) == 0){
+            strcat(out, "*");
+        } else{
+            strcat(out, ", ");
+            strcat(out, (a[i]));
+        }
+    }
+    printf("%s\n", out);
 
     for (int i = 0; i < n; i++) {
         free(a[i]);
     }
     free(a);
+    free(out);
 }
 
 
@@ -57,7 +73,7 @@ void bubblesort(char **a, int n){
         {
             if (strcmp(a[j], a[j+1]) > 0)
             {
-                char* tmp = a[j + 1];
+                void* tmp = a[j + 1];
                 a[j + 1] = a[j];
                 a[j] = tmp;
             }
