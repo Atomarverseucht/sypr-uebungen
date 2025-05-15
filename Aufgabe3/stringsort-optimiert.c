@@ -60,6 +60,13 @@ int main(int argc, const char *argv[]){
 
 
 void bubblesort(void *a, size_t n, size_t strL, int(*comp)(const void*, const void*)){
+    
+    void* tmp = (void*)malloc(strL*sizeof(char));
+    if(!tmp)
+    {
+        printf("Fehler"); 
+        exit(1);
+    }
     for (int j = n; j > 0; --j)
     {
         for (int i = 0; i < j - 1; ++i)
@@ -69,13 +76,11 @@ void bubblesort(void *a, size_t n, size_t strL, int(*comp)(const void*, const vo
 
             if (comp(p1, p2) > 0)
             {
-                void* tmp = (void*)malloc(strL*sizeof(char));
-                if(!tmp){printf("Fehler"); return;}
                 memcpy((char*)tmp, (char*)p2, strL);
                 memcpy((char*)p2, (char*)p1, strL);
                 memcpy((char*)p1, (char*)tmp, strL);
-                free(tmp);
             }
         }
     }
+    free(tmp);
 }
