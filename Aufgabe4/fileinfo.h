@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
+#ifndef FILEINFO_H
+#define FILEINFO_H
 
 enum f_type = {filetype_file, filetype_directory, filetype_other};
 
