@@ -1,30 +1,27 @@
 #include <limits.h>
-#include <stdio.h>
-#include <errno.h>  // errno
-#include <string.h> // strerror
-#include <sys/stat.h>
-#include <dirent.h>
-#include <unistd.h>
+#define _POSIX_C_SOURCE 200112L
+
 #ifndef FILEINFO_H
 #define FILEINFO_H
 
-enum f_type = {filetype_file, filetype_directory, filetype_other};
+enum f_type {filetype_file, filetype_directory, filetype_other};
 
-typedef struct fileinfo{
-    char[] name = malloc((NAME_MAX +1) * sizeof(char));
+typedef struct f_info{
+    char name[NAME_MAX];
     enum f_type type;
     union{
-        long long fileLength;
-        struct fileinfo* down; // Ordner
-    }file;
+        long long fileLength; // wenn type = file
+        struct f_info* down; // wenn type = directory
+    };
 
-    struct fileinfo* next; 
-} f_info;
+    struct f_info* next; 
+} fileinfo;
 
 
-f_info* fileinfo_create(char[] f_name);
+fileinfo* fileinfo_create(const char* f_name);
 
 void fileinfo_destroy(fileinfo* in);
 
 void fileinfo_print(fileinfo* in);
 
+#endif

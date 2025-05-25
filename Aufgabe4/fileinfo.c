@@ -1,5 +1,7 @@
+#define _POSIX_C_SOURCE 200112L
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>  // errno
 #include <string.h> // strerror
 #include <sys/stat.h>
@@ -7,86 +9,97 @@
 #include <unistd.h>
 #include "fileinfo.h"
 
-static f_info* fileinfo_create(char[] f_name){
-    struct f_info* out = malloc(sizeof(f_info));
+static void list_directory(const char* f_name, fileinfo* in);
+
+void fileinfo_print(fileinfo* in);
+
+fileinfo* fileinfo_create(const char* f_name){
+    fileinfo* out = malloc(sizeof(fileinfo));
     struct stat sb;
-    if(strlen(f_name) > NAME_MAX) { errno = ENAMETOOLONG; return null;}
-    out.name = f_name;
+    if(strlen(f_name) > NAME_MAX) { errno = ENAMETOOLONG; return NULL;}
     
-    if(lstat(f_name, &sb) == -1){
-        printf("Fehler lstat");
-        exit(1);
-    }
-    if(s_ISFILE(sb.st_mode)){
-        out.type = filetype_file;
-        out.fileLength = sb.st_size;
-    } else if(s_ISDIR(sb.st_mode)){
-        out.type = filetype_directory;
+    strncpy(out->name, f_name, NAME_MAX);
+    lstat(f_name, &sb);
+    if(S_ISREG(sb.st_mode)){
+        out->type = filetype_file;
+        out->fileLength = sb.st_size;
+    } else if(S_ISDIR(sb.st_mode)){
+        out->type = filetype_directory;
         // Hier Ordner öffnen
         list_directory(f_name, out);
     } else{
-        out.type = filetype_other;
+        out->type = filetype_other;
     }
     //next wird von list_directory übernommen
+    return out;
 }
 
-static void list_directory(char[] f_name, f_info* in){
-    DIR *dir_ = opendir(f_name);
+static void list_directory(const char* f_name, fileinfo* in){
+    if (chdir(f_name) != 0) {
+        perror("chdir");
+        exit(1);
+    }
+    DIR *dir_ = opendir(".");
     if(dir_ == NULL){
         printf("Fehler dir");
         exit(1);
     }
-
-    struct dirent d_ = readdir(dir_);
-    if(d_ = NULL){
-        printf("Fehler rd");
-        exit(1);
-    }
-
-    f_info* this = f_info_create(d_.d_name, dir_);
-    f_info* last = NULL;
-    in.down = this;
-    this = last;
+    
+    struct dirent *d_ = NULL;
+    fileinfo* this = NULL;
+    fileinfo* last = NULL;
 
     while((d_ = readdir(dir_)) != NULL){
-        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+        if (strcmp(d_->d_name, ".") == 0 || strcmp(d_->d_name, "..") == 0) {
             continue;
         }
-        
-        this = f_info_create(d_.d_name, dir_); 
-        last.next = this;
+        this = fileinfo_create(d_->d_name); 
+        if(last == NULL){
+            in->down = this;
+        } else{
+            last->next = this;
+        }
         last = this;
     }
 
-    closedir(f_name);
-    free(dir_);
-    free(d_);
+    closedir(dir_);
+    chdir("..");
 }
 
 void fileinfo_destroy(fileinfo* in){
-    if(in = NULL){return;}
-    if(in.type = filetype_directory){
-        fileinfo_destroy(in.down);
-        free(in.down);
-    } else{
-        free(in.fileLength);
+    if(in == NULL){return;}
+    if(in->type == filetype_directory){
+        fileinfo_destroy(in->down);
     }
-    fileinfo_destroy(in.next);
-    free(in.name);
-}
-
-void fileinfo_print(f_info* in){
-
-}
-
-static void print_regular(char[] f_name, long long f_length){
-
-}
-
-static void print_directory(char[] path, char[] f_name, f_info* in){
-
-}
-
-static void print_other(char[] f_name){
+    fileinfo_destroy(in->next);
     
+    free(in);
 }
+
+static void print_regular(const char* f_name, long long f_length){
+    printf("%s (regular, %lld Byte)\n", f_name, f_length);
+}
+
+static void print_directory(const char* path, const char* f_name, fileinfo* in){
+    printf("%s/%s:\n", path, f_name);
+    in = in->down;
+    fileinfo_print(in);
+    while((in = in->next) != NULL){
+        fileinfo_print(in);
+    }
+}
+
+static void print_other(const char* f_name){
+    printf("%s (other)\n", f_name);
+}
+
+void fileinfo_print(fileinfo* in){
+    if(in->type == filetype_directory){
+        print_directory("", in->name, in);
+    } else if(in->type == filetype_file){
+        print_regular(in->name, in->fileLength);
+    } else{
+        print_other(in->name);
+    }
+}
+
