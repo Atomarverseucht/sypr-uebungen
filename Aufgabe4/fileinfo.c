@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #include "fileinfo.h"
+#include <stdbool.h>
 
 static void list_directory(const char* f_name, fileinfo* in);
 
@@ -48,14 +49,16 @@ static void list_directory(const char* f_name, fileinfo* in){
     struct dirent *d_ = NULL;
     fileinfo* this = NULL;
     fileinfo* last = NULL;
+    _Bool first = true;
 
     while((d_ = readdir(dir_)) != NULL){
         if (strcmp(d_->d_name, ".") == 0 || strcmp(d_->d_name, "..") == 0) {
             continue;
         }
         this = fileinfo_create(d_->d_name); 
-        if(last == NULL){
+        if(first){
             in->down = this;
+            first = false;
         } else{
             last->next = this;
         }
@@ -83,6 +86,9 @@ static void print_regular(const char* f_name, long long f_length){
 static void print_directory(const char* path, const char* f_name, fileinfo* in){
     printf("%s/%s:\n", path, f_name);
     in = in->down;
+    if(in == NULL){
+        return;
+    }
     fileinfo_print(in);
     while((in = in->next) != NULL){
         fileinfo_print(in);
@@ -94,6 +100,9 @@ static void print_other(const char* f_name){
 }
 
 void fileinfo_print(fileinfo* in){
+    if(in == NULL){ 
+        return;
+    }
     if(in->type == filetype_directory){
         print_directory("", in->name, in);
     } else if(in->type == filetype_file){
