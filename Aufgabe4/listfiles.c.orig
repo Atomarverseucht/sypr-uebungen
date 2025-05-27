@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     {
         fileinfo_print(f);
     }
-
+    
     fileinfo_destroy(head);
 }
 

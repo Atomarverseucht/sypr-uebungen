@@ -16,59 +16,47 @@ void fileinfo_print(fileinfo* in);
 
 static void fin_print(const char* path, fileinfo* in, _Bool pMode);
 
-fileinfo* fileinfo_create(const char* f_name)
-{
+fileinfo* fileinfo_create(const char* f_name){
     fileinfo* out = malloc(sizeof(fileinfo));
-    if (!out)
-    {
+    if(!out){
         printf("malloc fi");
         exit(1);
     }
     struct stat sb;
-    if (strlen(f_name) > NAME_MAX)
-    {
+    if(strlen(f_name) > NAME_MAX) { 
         free(out);
         errno = ENAMETOOLONG;
         return NULL;
     }
-
+    
     strncpy(out->name, f_name, NAME_MAX);
-    if (lstat(f_name, &sb) != 0)
-    {
-        free(out);
-        return NULL;
-    }
+    if (lstat(f_name, &sb) != 0) {
+    free(out);
+    return NULL;
+}
     out->next = NULL;
-    if (S_ISREG(sb.st_mode))
-    {
+    if(S_ISREG(sb.st_mode)){
         out->type = filetype_file;
         out->fileLength = sb.st_size;
-    }
-    else if (S_ISDIR(sb.st_mode))
-    {
+    } else if(S_ISDIR(sb.st_mode)){
         out->type = filetype_directory;
         out->down = NULL;
         // Hier Ordner öffnen
         list_directory(f_name, out);
-    }
-    else
-    {
+    } else{
         out->type = filetype_other;
     }
     //next wird von list_directory übernommen
     return out;
 }
 
-static void list_directory(const char* f_name, fileinfo* in)
-{
-    if (chdir(f_name) != 0)
-    {
+static void list_directory(const char* f_name, fileinfo* in){
+    if (chdir(f_name) != 0) {
         perror("chdir");
         exit(1);
     }
     DIR *dir_ = opendir(".");
-    if (dir_ == NULL)
-    {
+    if(dir_ == NULL){
         printf("Fehler dir");
         exit(1);
     }
@@ -77,133 +65,96 @@ static void list_directory(const char* f_name, fileinfo* in)
     _Bool first = true;
     const struct dirent *d_;
 
-    while ((d_ = readdir(dir_)) != NULL)
-    {
-        if (strcmp(d_->d_name, ".") == 0 || strcmp(d_->d_name, "..") == 0)
-        {
+    while((d_ = readdir(dir_)) != NULL){
+        if (strcmp(d_->d_name, ".") == 0 || strcmp(d_->d_name, "..") == 0) {
             continue;
         }
-        this = fileinfo_create(d_->d_name);
-        if (first)
-        {
+        this = fileinfo_create(d_->d_name); 
+        if(first){
             in->down = this;
             first = false;
-        }
-        else
-        {
+        } else{
             last->next = this;
         }
         last = this;
     }
 
     closedir(dir_);
-    if (chdir("..") != 0)
-    {
+    if (chdir("..") != 0) {
         perror("chdir zurück");
         exit(1);
     }
 }
 
-void fileinfo_destroy(fileinfo* in)
-{
-    if (in == NULL)
-    {
-        return;
-    }
-    if (in->type == filetype_directory)
-    {
+void fileinfo_destroy(fileinfo* in){
+    if(in == NULL){return;}
+    if(in->type == filetype_directory){
         fileinfo_destroy(in->down);
     }
     fileinfo_destroy(in->next);
     free(in);
 }
 
-static void print_regular(const char* f_name, long long f_length)
-{
+static void print_regular(const char* f_name, long long f_length){
     printf("%s (regular, %lld Byte)\n", f_name, f_length);
 }
 
-static void print_directory(const char* path, const char* f_name, fileinfo* in)
-{
+static void print_directory(const char* path, const char* f_name, fileinfo* in){
     char* n_path = malloc(strlen(path) + strlen(f_name) + 2);
-    if (!n_path)
-    {
+    if(!n_path){
         printf("malloc p");
         exit(1);
     }
     strcpy(n_path, path);
-    if (strcmp("", path) != 0)
-    {
-        strcat(n_path, "/");
+    if(strcmp("", path) != 0){
+        strcat(n_path, "/"); 
     }
     strcat(n_path, f_name);
     printf("\n%s:\n", n_path);
     fileinfo* in_ = in;
     in_ = in_->down;
-    if (in_ != NULL)
-    {
+    if(in_ != NULL){
         fin_print(n_path, in_, false);
-        while ((in_ = in_->next) != NULL)
-        {
+        while((in_ = in_->next) != NULL){
             fin_print(n_path, in_, false);
         }
     }
     in = in->down;
-    if (in != NULL)
-    {
+    if(in != NULL){
         fin_print(n_path, in, true);
-        while ((in = in->next) != NULL)
-        {
+        while((in = in->next) != NULL){
             fin_print(n_path, in, true);
         }
     }
     free(n_path);
 }
 
-static void fin_print(const char* path, fileinfo* in, _Bool pMode)
-{
-    if (in->type == filetype_directory)
-    {
-        if (pMode)
-        {
+static void fin_print(const char* path, fileinfo* in, _Bool pMode){
+    if(in->type == filetype_directory){
+        if(pMode){
             print_directory(path, in->name, in);
-        }
-        else
-        {
+        } else{
             printf("%s (directory)\n", in->name);
         }
-
-    }
-    else
-    {
-        if (!pMode)
-        {
-            fileinfo_print(in);
-        }
+        
+    } else{
+        if(!pMode) {fileinfo_print(in);}
     }
 }
 
-static void print_other(const char* f_name)
-{
+static void print_other(const char* f_name){
     printf("%s (other)\n", f_name);
 }
 
-void fileinfo_print(fileinfo* in)
-{
-    if (in == NULL)
-    {
+void fileinfo_print(fileinfo* in){
+    if(in == NULL){ 
         return;
     }
-    if (in->type == filetype_directory)
-    {
+    if(in->type == filetype_directory){
         print_directory("", in->name, in);
-    }
-    else if (in->type == filetype_file)
-    {
+    } else if(in->type == filetype_file){
         print_regular(in->name, in->fileLength);
-    }
-    else
-    {
+    } else{
         print_other(in->name);
     }
 }

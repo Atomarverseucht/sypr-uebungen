@@ -6,17 +6,15 @@
 
 enum f_type {filetype_file, filetype_directory, filetype_other};
 
-typedef struct f_info
-{
+typedef struct f_info{
     char name[NAME_MAX];
     enum f_type type;
-    union
-    {
+    union{
         long long fileLength; // wenn type = file
         struct f_info* down; // wenn type = directory
     };
 
-    struct f_info* next;
+    struct f_info* next; 
 } fileinfo;
 
 
