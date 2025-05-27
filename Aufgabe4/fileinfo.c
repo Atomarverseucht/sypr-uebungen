@@ -14,6 +14,8 @@ static void list_directory(const char* f_name, fileinfo* in);
 
 void fileinfo_print(fileinfo* in);
 
+static void fin_print(char* path, fileinfo* in);
+
 fileinfo* fileinfo_create(const char* f_name){
     fileinfo* out = malloc(sizeof(fileinfo));
     struct stat sb;
@@ -75,7 +77,6 @@ void fileinfo_destroy(fileinfo* in){
         fileinfo_destroy(in->down);
     }
     fileinfo_destroy(in->next);
-    
     free(in);
 }
 
@@ -84,13 +85,25 @@ static void print_regular(const char* f_name, long long f_length){
 }
 
 static void print_directory(const char* path, const char* f_name, fileinfo* in){
-    printf("%s/%s:\n", path, f_name);
+    char* n_path = malloc(strlen(path) + strlen(f_name) + 2);
+    strcpy(n_path, path);
+    strcat(n_path, "/");
+    strcat(n_path, f_name);
+    printf("%s:\n", n_path);
     in = in->down;
     if(in == NULL){
         return;
     }
-    fileinfo_print(in);
+    fin_print(n_path, in);
     while((in = in->next) != NULL){
+        fin_print(n_path, in);
+    }
+}
+
+static void fin_print(char* path, fileinfo* in){
+    if(in->type == filetype_directory){
+        print_directory(path, in->name, in);
+    } else{
         fileinfo_print(in);
     }
 }
