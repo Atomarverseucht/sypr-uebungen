@@ -9,7 +9,6 @@
 #include <unistd.h>
 #include "fileinfo.h"
 #include <stdbool.h>
-
 static void list_directory(const char* f_name, fileinfo* in);
 
 void fileinfo_print(fileinfo* in);
@@ -21,7 +20,7 @@ fileinfo* fileinfo_create(const char* f_name)
     fileinfo* out = malloc(sizeof(fileinfo));
     if (!out)
     {
-        printf("malloc fi");
+        perror("malloc fi");
         exit(1);
     }
     struct stat sb;
@@ -69,7 +68,7 @@ static void list_directory(const char* f_name, fileinfo* in)
     DIR *dir_ = opendir(".");
     if (dir_ == NULL)
     {
-        printf("Fehler dir");
+        perror("Fehler dir");
         exit(1);
     }
     fileinfo* this = NULL;
@@ -99,11 +98,23 @@ static void list_directory(const char* f_name, fileinfo* in)
     closedir(dir_);
     if (chdir("..") != 0)
     {
-        perror("chdir zurück");
+        perror("chdir zurück\n");
         exit(1);
     }
 }
 
+static void fin_destroy(fileinfo* in){
+    if (in == NULL)
+    {
+        return;
+    }
+    if (in->type == filetype_directory)
+    {
+        fin_destroy(in->down);
+    }
+    fin_destroy(in->next);
+    free(in);
+}
 void fileinfo_destroy(fileinfo* in)
 {
     if (in == NULL)
@@ -112,9 +123,8 @@ void fileinfo_destroy(fileinfo* in)
     }
     if (in->type == filetype_directory)
     {
-        fileinfo_destroy(in->down);
+        fin_destroy(in->down);
     }
-    fileinfo_destroy(in->next);
     free(in);
 }
 
@@ -128,7 +138,7 @@ static void print_directory(const char* path, const char* f_name, fileinfo* in)
     char* n_path = malloc(strlen(path) + strlen(f_name) + 2);
     if (!n_path)
     {
-        printf("malloc p");
+        perror("malloc p");
         exit(1);
     }
     strcpy(n_path, path);
@@ -207,4 +217,3 @@ void fileinfo_print(fileinfo* in)
         print_other(in->name);
     }
 }
-

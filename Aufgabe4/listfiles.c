@@ -75,6 +75,11 @@ int main(int argc, char *argv[])
         fileinfo_print(f);
     }
 
-    fileinfo_destroy(head);
+    while (head)
+    {
+        fileinfo *next = head->next;
+        fileinfo_destroy(head);
+        head = next;
+    }
 }
 
