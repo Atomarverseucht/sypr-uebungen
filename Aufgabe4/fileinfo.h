@@ -1,8 +1,18 @@
-#include <limits.h>
-#define _POSIX_C_SOURCE 200112L
-
+/*
+ * fileinfo.h
+ *
+ * struct & Übersicht über Funktionen der Library
+ *
+ * Author Tom Bonsiep
+ * Erstellt am: 29.05.2025
+ * Zuletzt geändert: 30.05.2025
+ */
 #ifndef FILEINFO_H
 #define FILEINFO_H
+
+#include <limits.h>
+#include <stddef.h>
+#define _POSIX_C_SOURCE 200112L
 
 enum f_type {filetype_file, filetype_directory, filetype_other};
 
@@ -12,7 +22,7 @@ typedef struct f_info
     enum f_type type;
     union
     {
-        long long fileLength; // wenn type = file
+        size_t fileLength; // wenn type = file
         struct f_info* down; // wenn type = directory
     };
 
@@ -24,6 +34,6 @@ fileinfo* fileinfo_create(const char* f_name);
 
 void fileinfo_destroy(fileinfo* in);
 
-void fileinfo_print(fileinfo* in);
+void fileinfo_print(fileinfo* const in);
 
 #endif

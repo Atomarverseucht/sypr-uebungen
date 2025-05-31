@@ -1,3 +1,13 @@
+/*
+ * fileinfo.c
+ *
+ * Library-Implementation
+ *
+ * Author Tom Bonsiep
+ * Erstellt am: 29.05.2025
+ * Zuletzt geändert: 30.05.2025
+ */
+
 #define _POSIX_C_SOURCE 200112L
 #include <limits.h>
 #include <stdio.h>
@@ -9,9 +19,8 @@
 #include <unistd.h>
 #include "fileinfo.h"
 #include <stdbool.h>
-static void list_directory(const char* f_name, fileinfo* in);
 
-void fileinfo_print(fileinfo* in);
+static void list_directory(const char* f_name, fileinfo* in);
 
 static void fin_print(const char* path, fileinfo* in, _Bool pMode);
 
@@ -20,8 +29,8 @@ fileinfo* fileinfo_create(const char* f_name)
     fileinfo* out = malloc(sizeof(fileinfo));
     if (!out)
     {
-        perror("malloc fi");
-        exit(1);
+        errno = ENOMEM;
+        return NULL;
     }
     struct stat sb;
     if (strlen(f_name) > NAME_MAX)
@@ -35,6 +44,7 @@ fileinfo* fileinfo_create(const char* f_name)
     if (lstat(f_name, &sb) != 0)
     {
         free(out);
+        errno = ENOENT;
         return NULL;
     }
     out->next = NULL;
@@ -62,14 +72,14 @@ static void list_directory(const char* f_name, fileinfo* in)
 {
     if (chdir(f_name) != 0)
     {
-        perror("chdir");
-        exit(1);
+        errno = ENOENT;
+        return;
     }
     DIR *dir_ = opendir(".");
     if (dir_ == NULL)
     {
-        perror("Fehler dir");
-        exit(1);
+        errno = ENOMEM;
+        return;
     }
     fileinfo* this = NULL;
     fileinfo* last = NULL;
@@ -98,8 +108,8 @@ static void list_directory(const char* f_name, fileinfo* in)
     closedir(dir_);
     if (chdir("..") != 0)
     {
-        perror("chdir zurück\n");
-        exit(1);
+        errno = ENOENT;
+        return;
     }
 }
 
@@ -128,18 +138,19 @@ void fileinfo_destroy(fileinfo* in)
     free(in);
 }
 
-static void print_regular(const char* f_name, long long f_length)
+static void print_regular(const char* f_name, size_t f_length)
 {
-    printf("%s (regular, %lld Byte)\n", f_name, f_length);
+    printf("%s (regular, %zu Byte)\n", f_name, f_length);
 }
 
-static void print_directory(const char* path, const char* f_name, fileinfo* in)
+static void print_directory(const char* path, const char* f_name, fileinfo* const in)
 {
     char* n_path = malloc(strlen(path) + strlen(f_name) + 2);
     if (!n_path)
     {
-        perror("malloc p");
-        exit(1);
+        printf("%s/%s: Path too long", path, f_name);
+        errno = ENOMEM;
+        return;
     }
     strcpy(n_path, path);
     if (strcmp("", path) != 0)
@@ -158,19 +169,19 @@ static void print_directory(const char* path, const char* f_name, fileinfo* in)
             fin_print(n_path, in_, false);
         }
     }
-    in = in->down;
-    if (in != NULL)
+    in_ = in->down;
+    if (in_ != NULL)
     {
-        fin_print(n_path, in, true);
-        while ((in = in->next) != NULL)
+        fin_print(n_path, in_, true);
+        while ((in_ = in_->next) != NULL)
         {
-            fin_print(n_path, in, true);
+            fin_print(n_path, in_, true);
         }
     }
     free(n_path);
 }
 
-static void fin_print(const char* path, fileinfo* in, _Bool pMode)
+static void fin_print(const char* path, fileinfo* const in, _Bool pMode)
 {
     if (in->type == filetype_directory)
     {
@@ -193,12 +204,12 @@ static void fin_print(const char* path, fileinfo* in, _Bool pMode)
     }
 }
 
-static void print_other(const char* f_name)
+static void print_other(const char* const f_name)
 {
     printf("%s (other)\n", f_name);
 }
 
-void fileinfo_print(fileinfo* in)
+void fileinfo_print(fileinfo* const in)
 {
     if (in == NULL)
     {
