@@ -10,9 +10,9 @@
 #ifndef FILEINFO_H
 #define FILEINFO_H
 
+#define _POSIX_C_SOURCE 200112L
 #include <limits.h>
 #include <stddef.h>
-#define _POSIX_C_SOURCE 200112L
 
 enum f_type {filetype_file, filetype_directory, filetype_other};
 
