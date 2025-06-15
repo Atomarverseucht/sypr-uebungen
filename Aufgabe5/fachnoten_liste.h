@@ -1,11 +1,17 @@
 #ifndef FACHNOTE_H
 #define FACHNOTE_H
 
-class fachnoten_liste final{
+#include "fachnote.h"
 
+class fachnoten_liste final{
+    using delete_func = void(*)(fachnote*);
+    private:
+        class node;
+        delete_func deleter;
     public:
-        using delete_func = void(*)(fachnote*);
+        
         fachnoten_liste(delete_func del);
+        ~fachnoten_liste();
         node head;
 
         // illegale Argumente
@@ -14,10 +20,8 @@ class fachnoten_liste final{
         fachnoten_liste(fachnoten_liste &&) = delete;
         fachnoten_liste &operator=(fachnoten_liste &&) = delete;
 
-    private:
-        class node;
-        delete_func deleter;
+    
 
-}
+};
 
 #endif

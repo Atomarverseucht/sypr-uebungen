@@ -13,6 +13,6 @@ class benotung final{
         bool ist_bestanden();
     
     friend bool operator==(benotung b1, benotung b2);
-}
+};
 
 #endif

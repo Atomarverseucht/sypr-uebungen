@@ -1,7 +1,7 @@
 #ifndef FACHNOTE_H
 #define FACHNOTE_H
 
-#include <string.h>
+#include <string>
 #include "benotung.h"
 
 class fachnote final{
@@ -10,5 +10,5 @@ class fachnote final{
         const benotung note;
 
         fachnote(const std::string& fach, const benotung& note);
-}
+};
 #endif
