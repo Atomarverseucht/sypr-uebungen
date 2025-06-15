@@ -181,7 +181,7 @@ static void print_directory(const char* path, const char* f_name, fileinfo* cons
     free(n_path);
 }
 
-static void fin_print(const char* path,const fileinfo* const in, _Bool pMode)
+static void fin_print(const char* path, fileinfo* const in, _Bool pMode)
 {
     if (in->type == filetype_directory)
     {
