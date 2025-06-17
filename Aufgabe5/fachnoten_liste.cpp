@@ -1,17 +1,18 @@
 #include "fachnoten_liste.h"
 
-class fachnoten_liste::element final {
-  element *next;
+
+class fachnoten_liste::node final {
+  node *next;
   fachnote *n;
 
-  element(element *e, fachnote *m) : next(e), n(m) {}
+  node(node *e, fachnote *m) : next(e), n(m) {}
 
   friend class fachnoten_liste;
   friend class fachnoten_liste::iterator;
 };
 
 // Iterator-Funktionen
-fachnoten_liste::iterator::iterator(element *e) : current(e) {}
+fachnoten_liste::iterator::iterator(node *e) : current(e) {}
 
 bool fachnoten_liste::iterator::operator!=(const iterator &i) const {
   return this->current != i.current;
@@ -27,19 +28,16 @@ fachnoten_liste::iterator &fachnoten_liste::iterator::operator++() {
 }
 
 // fachnotenliste-Funktionen
-fachnoten_liste::fachnoten_liste() : head(nullptr) {}
+fachnoten_liste::fachnoten_liste(delete_func deleter) : head(nullptr); deleter(deleter) {
+
+}
 
 fachnoten_liste::~fachnoten_liste() {
-  element *e = this->head;
-  while (e != nullptr) {
-    element *x = e;
-    e = e->next;
-    delete x;
-  }
+  deleter(this);
 }
 
 fachnoten_liste &fachnoten_liste::insert(fachnote *n) {
-  this->head = new element(this->head, n);
+  this->head = new node(this->head, n);
   return *this;
 }
 

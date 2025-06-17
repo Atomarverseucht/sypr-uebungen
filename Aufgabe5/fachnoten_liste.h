@@ -1,10 +1,11 @@
-#ifndef FACHNOTE_H
-#define FACHNOTE_H
+#ifndef FACHNOTENLISTE_H
+#define FACHNOTENLISTE_H
 
 #include "fachnote.h"
+using delete_func = void(*)(fachnote*);
 
 class fachnoten_liste final{
-    using delete_func = void(*)(fachnote*);
+    
     private:
         class node;
         delete_func deleter;
@@ -12,14 +13,31 @@ class fachnoten_liste final{
         
         fachnoten_liste(delete_func del);
         ~fachnoten_liste();
-        node head;
+        node* head;
 
         // illegale Argumente
         fachnoten_liste(const fachnoten_liste & ) = delete;
         fachnoten_liste &operator=(const fachnoten_liste &) = delete;
         fachnoten_liste(fachnoten_liste &&) = delete;
         fachnoten_liste &operator=(fachnoten_liste &&) = delete;
-
+        
+        fachnoten_liste& insert(fachnote*);
+   
+        class iterator final
+        {
+            private:
+                node *current;
+                explicit iterator(node*);
+            public:
+                bool operator!=(const iterator&) const;
+                int& operator*() const;
+                iterator& operator++();
+    
+           friend class fachnoten_liste;
+      };
+   
+       iterator begin();
+       iterator end();
     
 
 };
