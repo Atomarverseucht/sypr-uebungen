@@ -7,8 +7,8 @@ class benotung final{
         int note;
 
     public:
-        static const benotung* beste;
-        static const benotung* schlechteste;
+        static const benotung beste;
+        static const benotung schlechteste;
         benotung(int note);
         int int_value() const;
         bool ist_bestanden() const;

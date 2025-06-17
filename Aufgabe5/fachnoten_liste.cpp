@@ -28,12 +28,18 @@ fachnoten_liste::iterator &fachnoten_liste::iterator::operator++() {
 }
 
 // fachnotenliste-Funktionen
-fachnoten_liste::fachnoten_liste(delete_func deleter) : head(nullptr); deleter(deleter) {
+fachnoten_liste::fachnoten_liste(delete_func deleter) : deleter(deleter), head(nullptr) {
 
 }
 
 fachnoten_liste::~fachnoten_liste() {
-  deleter(this);
+  node* n = head;
+  while(n){
+    node* nd = n;
+    n = n->next;
+    deleter(nd->n);
+    delete nd;
+  }
 }
 
 fachnoten_liste &fachnoten_liste::insert(fachnote *n) {
@@ -48,3 +54,4 @@ fachnoten_liste::iterator fachnoten_liste::begin() {
 fachnoten_liste::iterator fachnoten_liste::end() {
   return fachnoten_liste::iterator(nullptr);
 }
+

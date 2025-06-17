@@ -1,8 +1,8 @@
 #include "benotung.h"
 #include <stdexcept>
 
-const benotung* benotung::beste = new benotung(10);
-const benotung* benotung::schlechteste = new benotung(50);
+const benotung benotung::beste(10);
+const benotung benotung::schlechteste(50);
 
 benotung::benotung(int note): note(note)
 {
@@ -29,7 +29,7 @@ int benotung::int_value() const{
 }
 
 bool benotung::ist_bestanden() const{
-    return !(this == schlechteste);
+    return !(this->note == schlechteste.note);
 }
 
 bool operator==(const benotung b1, const benotung b2){

@@ -9,11 +9,11 @@ class fachnoten_liste final{
     private:
         class node;
         delete_func deleter;
+        node* head;
     public:
         
         fachnoten_liste(delete_func del);
         ~fachnoten_liste();
-        node* head;
 
         // illegale Argumente
         fachnoten_liste(const fachnoten_liste & ) = delete;
@@ -30,7 +30,7 @@ class fachnoten_liste final{
                 explicit iterator(node*);
             public:
                 bool operator!=(const iterator&) const;
-                int& operator*() const;
+                fachnote*& operator*() const;
                 iterator& operator++();
     
            friend class fachnoten_liste;
