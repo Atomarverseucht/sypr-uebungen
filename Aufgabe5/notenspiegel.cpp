@@ -18,8 +18,8 @@
 
 namespace
 {
-    std::ostream& operator<<(std::ostream& os, const benotung& n);
-    void delete_fachnote(fachnote *);
+std::ostream& operator<<(std::ostream& os, const benotung& n);
+void delete_fachnote(fachnote *);
 }
 
 int main(void)
@@ -103,16 +103,16 @@ int main(void)
 
 namespace
 {
-    std::ostream& operator<<(std::ostream& os, const benotung& n)
-    {
-        int note = n.int_value();
-        os << note / 10 << ',' << note % 10;
-        return os;
-    }
+std::ostream& operator<<(std::ostream& os, const benotung& n)
+{
+    int note = n.int_value();
+    os << note / 10 << ',' << note % 10;
+    return os;
+}
 
-    void delete_fachnote(fachnote *f)
-    {
-        delete f;
-    }
+void delete_fachnote(fachnote *f)
+{
+    delete f;
+}
 }
 
