@@ -1,3 +1,11 @@
+/*
+ * benotung.cpp
+ *
+ * Author Tom Bonsiep
+ * Erstellt am: 17.06.2025
+ * Zuletzt geändert: 17.06.2025
+ */
+
 #include "benotung.h"
 #include <stdexcept>
 

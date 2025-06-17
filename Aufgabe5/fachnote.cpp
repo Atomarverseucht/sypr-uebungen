@@ -1,3 +1,11 @@
+/*
+ * fachnote.cpp
+ *
+ * Author Tom Bonsiep
+ * Erstellt am: 17.06.2025
+ * Zuletzt geändert: 17.06.2025
+ */
+
 #include "fachnote.h"
 #include <string>
 #include <stdexcept>
