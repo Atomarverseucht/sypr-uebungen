@@ -10,11 +10,13 @@ CXXFLAGS = -Wall -Wextra -Werror -Weffc++ -Wold-style-cast -std=$(STD) -pedantic
 CPPCHECK = cppcheck --enable=warning,style --std=$(STD)
 STD = c++11
 SRC_Code = ../../Aufgabe5
+SRC_O = ../lib
 
-TARGET = fachnoten_liste
+TARGET = notenspiegel
 OBJECTS = \
-    benotung.o \
-    fachnote.o \
+    $(SRC_O)/benotung.o \
+    $(SRC_O)/fachnote.o \
+    $(SRC_O)/fachnoten_liste.o
 
 .PHONY: all clean cppcheck
 
@@ -29,9 +31,7 @@ $(TARGET): $(TARGET).o $(OBJECTS)
 cppcheck: $(SRC_Code)/$(TARGET).cpp $(OBJECTS:.o=.cpp)
 	$(CPPCHECK) $^ 
 
-benotung.o: $(SRC_Code)/benotung.cpp 
+notenspiegel.o: $(SRC_Code)/notenspiegel.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $^ -I$(SRC_Code)
-fachnote.o: $(SRC_Code)/fachnote.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $^ -I$(SRC_Code)
-fachnoten_liste.o: $(SRC_Code)/fachnoten_liste.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $^ -I$(SRC_Code)
+
+g++ -g -Wall -Wextra -Werror -Weffc++ -Wold-style-cast -std=c++11 -pedantic ../../Aufgabe5/
