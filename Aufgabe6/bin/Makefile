@@ -9,29 +9,26 @@ CXX = g++ -g #-fno-elide-constructors
 CXXFLAGS = -Wall -Wextra -Werror -Weffc++ -Wold-style-cast -std=$(STD) -pedantic
 CPPCHECK = cppcheck --enable=warning,style --std=$(STD)
 STD = c++11
+LIB = aufgabe6
+LIBNAME = $(LIBDIR)/lib$(LIB)
+LIBDIR = ../lib
+LIBTYPE ?= a
 SRC_Code = ../../Aufgabe5
-SRC_O = ../lib
 
 TARGET = notenspiegel
-OBJECTS = \
-    $(SRC_O)/benotung.o \
-    $(SRC_O)/fachnote.o \
-    $(SRC_O)/fachnoten_liste.o
 
-.PHONY: all clean cppcheck
+.PHONY: all clean
 
 all: $(TARGET)
 
 clean:
-	rm -f $(TARGET) $(TARGET).o $(OBJECTS)
+	rm -f $(TARGET) $(TARGET).o
 
-$(TARGET): $(TARGET).o $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $@ $^
-
-cppcheck: $(SRC_Code)/$(TARGET).cpp $(OBJECTS:.o=.cpp)
-	$(CPPCHECK) $^ 
+$(TARGET): $(TARGET).o $(LIBNAME).$(LIBTYPE)
+	$(CXX) $(LDFLAGS) -o $@ $< -l$(LIB) -L$(LIBDIR)
 
 notenspiegel.o: $(SRC_Code)/notenspiegel.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $^ -I$(SRC_Code)
 
-g++ -g -Wall -Wextra -Werror -Weffc++ -Wold-style-cast -std=c++11 -pedantic ../../Aufgabe5/
+$(LIBNAME).$(LIBTYPE):
+	$(MAKE) -C $(LIBDIR) LIBTYPE=$(LIBTYPE) 
