@@ -21,7 +21,7 @@ OBJECTS = \
 
 .PHONY: all clean
 
-all: $(OBJECTS) $(LIBNAME)
+all: $(LIBNAME)
 
 clean:
 	rm -f $(OBJECTS) $(LIB).a $(LIB).so
@@ -37,3 +37,7 @@ $(LIB).a: $(OBJECTS)
 $(LIB).so: $(OBJECTS)
 	$(CXX) -shared -o $@ $^
 
+depend: 
+	$(CXX) -MM $(CXXFLAGS) $(SRC_Code)/benotung.cpp $(SRC_Code)/fachnote.cpp $(SRC_Code)/fachnoten_liste.cpp > $@
+
+include depend
