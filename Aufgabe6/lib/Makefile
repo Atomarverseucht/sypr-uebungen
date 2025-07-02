@@ -24,7 +24,7 @@ OBJECTS = \
 all: $(LIBNAME)
 
 clean:
-	rm -f $(OBJECTS) $(LIB).a $(LIB).so
+	rm -f $(OBJECTS) $(LIB).a $(LIB).so depend
 
 benotung.o: $(SRC_Code)/benotung.cpp 
 	$(CXX) $(CXXFLAGS) -c -o $@ $^ -I$(SRC_Code)
