@@ -30,5 +30,7 @@ $(TARGET): $(TARGET).o $(LIBNAME).$(LIBTYPE)
 notenspiegel.o: $(SRC_Code)/notenspiegel.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $^ -I$(SRC_Code)
 
-$(LIBNAME).$(LIBTYPE):
+$(LIBNAME).$(LIBTYPE): $(LIBDIR)/*.o
 	$(MAKE) -C $(LIBDIR) LIBTYPE=$(LIBTYPE) 
+
+include $(LIBDIR)/depend

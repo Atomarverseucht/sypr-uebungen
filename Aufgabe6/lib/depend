@@ -1,6 +1,0 @@
-benotung.o: ../../Aufgabe5/benotung.cpp ../../Aufgabe5/benotung.h
-fachnote.o: ../../Aufgabe5/fachnote.cpp ../../Aufgabe5/fachnote.h \
- ../../Aufgabe5/benotung.h
-fachnoten_liste.o: ../../Aufgabe5/fachnoten_liste.cpp \
- ../../Aufgabe5/fachnoten_liste.h ../../Aufgabe5/fachnote.h \
- ../../Aufgabe5/benotung.h
